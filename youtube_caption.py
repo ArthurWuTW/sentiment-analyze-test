@@ -19,6 +19,9 @@ sentence_arr = [sent['text'] for sent in srt]
 sentence = ' '.join(sentence_arr)
 
 import flair
+from pathlib import Path
+# import flair
+flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
 sentence = flair.data.Sentence(sentence)
 sentiment_model.predict(sentence)
