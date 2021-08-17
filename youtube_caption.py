@@ -2,6 +2,12 @@
 # pip3 install flair
 # docker: docker-script-opensfm
 
+# from pathlib import Path
+# import flair
+# flair.cache_root = "/your/path/.flair" # DOES NOT WORK
+# flair.cache_root = Path("/your/path/.flair")# WORKS
+
+
 from youtube_transcript_api import YouTubeTranscriptApi
 srt = YouTubeTranscriptApi.get_transcript("zS2DFYKzVI0")
 
