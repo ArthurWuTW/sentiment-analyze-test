@@ -55,6 +55,7 @@ for result in customSearch.result()['result']:
         time.sleep(10)
     except:
         print("cannot get subtitles")
+        time.sleep(10)
 
 
 
