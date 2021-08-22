@@ -34,7 +34,7 @@ import flair
 from pathlib import Path
 flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
-customSearch = CustomSearch('tesla', VideoSortOrder.uploadDate, limit = 20)
+customSearch = CustomSearch('tesla news', VideoSortOrder.uploadDate, limit = 20)
 
 print(customSearch.result())
 
@@ -53,6 +53,21 @@ for result in customSearch.result()['result']:
         sentiment_model.predict(sentence)
         print(sentence.labels)
         time.sleep(10)
+
+        score_string = ""
+        if sentence.labels[0].value == 'NEGATIVE':
+            score_string = "-"
+        score_string = score_string + str(sentence.labels[0].score)
+
+        my_data = {
+            'searchText':'',
+            'title':'',
+            'is_transcript':'',
+            'text':'',
+            'score': float(score_string)
+        }
+
+        print(my_data)
     except:
         print("cannot get subtitles")
         time.sleep(10)
