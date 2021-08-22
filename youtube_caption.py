@@ -32,9 +32,13 @@ from youtubesearchpython import *
 import time
 import flair
 from pathlib import Path
+import json
+import requests
 flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
-customSearch = CustomSearch('tesla news', VideoSortOrder.uploadDate, limit = 20)
+searchText = 'tesla news'
+
+customSearch = CustomSearch(searchText, VideoSortOrder.uploadDate, limit = 20)
 
 print(customSearch.result())
 
@@ -49,25 +53,31 @@ for result in customSearch.result()['result']:
         sentence_arr = [sent['text'] for sent in srt]
         sentence = ' '.join(sentence_arr)
         # print(sentence)
-        sentence = flair.data.Sentence(sentence)
-        sentiment_model.predict(sentence)
-        print(sentence.labels)
-        time.sleep(10)
+        sentence_result = flair.data.Sentence(sentence)
+        sentiment_model.predict(sentence_result)
+        print(sentence_result.labels)
+        
 
         score_string = ""
-        if sentence.labels[0].value == 'NEGATIVE':
+        if sentence_result.labels[0].value == 'NEGATIVE':
             score_string = "-"
-        score_string = score_string + str(sentence.labels[0].score)
+        score_string = score_string + str(sentence_result.labels[0].score)
 
         my_data = {
-            'searchText':'',
-            'title':'',
-            'is_transcript':'',
-            'text':'',
+            'searchText':searchText,
+            'title':result['title'],
+            'is_transcript':'Y',
+            'text':sentence,
             'score': float(score_string)
         }
-
         print(my_data)
+
+        my_headers = {'Content-Type': 'application/json'}
+        r = requests.post('http://172.17.0.2:8080/api/text', data = json.dumps(my_data), headers = my_headers)
+        
+    
+
+        time.sleep(10)
     except:
         print("cannot get subtitles")
         time.sleep(10)
