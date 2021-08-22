@@ -34,6 +34,7 @@ import flair
 from pathlib import Path
 import json
 import requests
+import re
 flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
 searchText = 'tesla news'
@@ -52,6 +53,7 @@ for result in customSearch.result()['result']:
         srt = YouTubeTranscriptApi.get_transcript(result['id'])
         sentence_arr = [sent['text'] for sent in srt]
         sentence = ' '.join(sentence_arr)
+        sentence = re.sub(r"[^a-zA-Z0-9]"," ",sentence)
         # print(sentence)
         sentence_result = flair.data.Sentence(sentence)
         sentiment_model.predict(sentence_result)
