@@ -70,12 +70,13 @@ for result in customSearch.result()['result']:
             'title':result['title'],
             'is_transcript':'Y',
             'text':sentence,
-            'score': float(score_string)
+            'score': float(score_string),
+            'urlId':result['id']
         }
         print(my_data)
 
         my_headers = {'Content-Type': 'application/json'}
-        r = requests.post('http://172.17.0.2:8080/api/text', data = json.dumps(my_data), headers = my_headers)
+        r = requests.post('http://172.17.0.4:8080/api/text', data = json.dumps(my_data), headers = my_headers)
         
     
 
