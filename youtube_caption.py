@@ -37,7 +37,7 @@ import requests
 import re
 flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
-searchText = 'tesla news'
+searchText = 'tesla stock'
 
 customSearch = CustomSearch(searchText, VideoSortOrder.uploadDate, limit = 20)
 
