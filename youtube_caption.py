@@ -37,53 +37,55 @@ import requests
 import re
 flair.cache_root = Path("/home/user/flair_cache")# WORKS
 sentiment_model = flair.models.TextClassifier.load('en-sentiment')
-searchText = 'tesla stock'
+searchText_List = ['tesla news', 'tesla stock', 'apple news', 'apple stock']
 
-customSearch = CustomSearch(searchText, VideoSortOrder.uploadDate, limit = 20)
-
-print(customSearch.result())
-
-
-
-for result in customSearch.result()['result']:
-    try:
-        print("------------------")
-        print(result['id'])
-        print(result['title'])
-        srt = YouTubeTranscriptApi.get_transcript(result['id'])
-        sentence_arr = [sent['text'] for sent in srt]
-        sentence = ' '.join(sentence_arr)
-        sentence = re.sub(r"[^a-zA-Z0-9]"," ",sentence)
-        # print(sentence)
-        sentence_result = flair.data.Sentence(sentence)
-        sentiment_model.predict(sentence_result)
-        print(sentence_result.labels)
-        
-
-        score_string = ""
-        if sentence_result.labels[0].value == 'NEGATIVE':
-            score_string = "-"
-        score_string = score_string + str(sentence_result.labels[0].score)
-
-        my_data = {
-            'searchText':searchText,
-            'title':result['title'],
-            'is_transcript':'Y',
-            'text':sentence,
-            'score': float(score_string),
-            'urlId':result['id']
-        }
-        print(my_data)
-
-        my_headers = {'Content-Type': 'application/json'}
-        r = requests.post('http://172.17.0.4:8080/api/text', data = json.dumps(my_data), headers = my_headers)
-        
+for searchText in searchText_List:
     
+    customSearch = CustomSearch(searchText, VideoSortOrder.uploadDate, limit = 20)
 
-        time.sleep(10)
-    except:
-        print("cannot get subtitles")
-        time.sleep(10)
+    print(customSearch.result())
+
+
+
+    for result in customSearch.result()['result']:
+        try:
+            print("------------------")
+            print(result['id'])
+            print(result['title'])
+            srt = YouTubeTranscriptApi.get_transcript(result['id'])
+            sentence_arr = [sent['text'] for sent in srt]
+            sentence = ' '.join(sentence_arr)
+            sentence = re.sub(r"[^a-zA-Z0-9]"," ",sentence)
+            # print(sentence)
+            sentence_result = flair.data.Sentence(sentence)
+            sentiment_model.predict(sentence_result)
+            print(sentence_result.labels)
+            
+
+            score_string = ""
+            if sentence_result.labels[0].value == 'NEGATIVE':
+                score_string = "-"
+            score_string = score_string + str(sentence_result.labels[0].score)
+
+            my_data = {
+                'searchText':searchText,
+                'title':result['title'],
+                'is_transcript':'Y',
+                'text':sentence,
+                'score': float(score_string),
+                'urlId':result['id']
+            }
+            print(my_data)
+
+            my_headers = {'Content-Type': 'application/json'}
+            r = requests.post('http://10.1.1.9:7002/demo/api/text', data = json.dumps(my_data), headers = my_headers)
+            
+        
+
+            time.sleep(10)
+        except:
+            print("cannot get subtitles")
+            time.sleep(10)
 
 
 
